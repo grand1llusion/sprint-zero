@@ -61,8 +61,12 @@ class Session:
         kind, step_id = self.steps[self.state["step"]]
         base = {"kind": kind, "step": step_id, "number": self.state["step"] + 1, "of": len(self.steps)}
         if kind == "quiz":
-            title = "Before you start: quick check" if step_id == "quiz_pre" else "After the Sprint: quick check"
-            return {**base, "title": title,
+            pre = step_id == "quiz_pre"
+            title = "Optional warm-up: 5 quick questions" if pre else "Optional: the same 5 questions again"
+            note = ("No pressure: guess if you're not sure. This measures how much the simulator teaches, "
+                    "not you. You can skip it." if pre else
+                    "See how much has changed since you started. You can skip it.")
+            return {**base, "title": title, "note": note, "optional": True,
                     "questions": [{"q": q["q"], "options": q["options"]} for q in self.pack["quiz"]]}
         if kind == "planning":
             return {**base, "title": "Sprint Planning", "day": 1,
@@ -89,6 +93,9 @@ class Session:
 
     def _submit_quiz(self, step_id: str, answer: Any) -> dict[str, Any]:
         n = len(self.pack["quiz"])
+        if answer is None or answer == "skip":
+            self.state["log"].append({"kind": "quiz", "step": step_id, "skipped": True})
+            return {"skipped": True, "of": n}
         if not isinstance(answer, list) or len(answer) != n or not all(isinstance(a, int) for a in answer):
             raise SessionError(f"answer all {n} questions with option numbers")
         self.state["log"].append({"kind": "quiz", "step": step_id, "answer": answer})

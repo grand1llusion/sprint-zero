@@ -41,8 +41,11 @@ def ask_text(prompt: str) -> str:
             return answer
 
 
-def play_quiz(step: dict) -> list[int]:
+def play_quiz(step: dict) -> list[int] | None:
     say(step["title"], BOLD + CYAN)
+    say(step["note"], DIM)
+    if input("Take it? [Y/n] > ").strip().lower().startswith("n"):
+        return None
     answers = []
     for n, q in enumerate(step["questions"], 1):
         say(f"\n{n}. {q['q']}")
@@ -68,6 +71,9 @@ def play_planning(step: dict) -> list[str]:
 
 
 def show_result(result: dict) -> None:
+    if result.get("skipped"):
+        say("Skipped.", DIM)
+        return
     if "correct" in result:
         say(f"You got {result['correct']} of {result['of']}.", DIM)
         return

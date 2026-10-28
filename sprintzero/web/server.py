@@ -140,7 +140,8 @@ def create_app(grader=None, agent_factory_for=memory_agent_factory, store=None) 
             raise HTTPException(422, str(exc))
         feed = record["feed"]
         if step["kind"] == "quiz":
-            feed.append({"type": "quiz", "title": step["title"], "correct": result["correct"], "of": result["of"]})
+            feed.append({"type": "quiz", "title": step["title"], "skipped": result.get("skipped", False),
+                         "correct": result.get("correct"), "of": result["of"]})
         else:
             said = body.answer if step["kind"] == "text" else result["planning"]
             feed.append({"type": "you", "kind": step["kind"], "answer": said})

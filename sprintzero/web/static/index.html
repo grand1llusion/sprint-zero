@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sprint Zero</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial' font-weight='700' fill='white' text-anchor='middle'%3E0%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231e3a8a'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial' font-weight='700' fill='white' text-anchor='middle'%3E0%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -12,23 +12,55 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="logo" aria-hidden="true">0</span><div><b>Sprint Zero</b><small id="packTitle">Your first Sprint, before your first day</small></div></div>
+  <svg class="top-art" viewBox="0 0 640 120" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+    <g opacity=".16" fill="#fff">
+      <rect x="380" y="16" width="44" height="34" rx="5"/><rect x="380" y="58" width="44" height="34" rx="5"/>
+      <rect x="436" y="16" width="44" height="34" rx="5"/><rect x="436" y="58" width="44" height="34" rx="5" opacity=".5"/>
+      <rect x="492" y="38" width="44" height="34" rx="5"/><rect x="548" y="16" width="44" height="34" rx="5" opacity=".6"/>
+    </g>
+    <path d="M300 22 C 360 30, 400 46, 440 60 S 540 92, 640 100" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
+    <circle cx="610" cy="98" r="5" fill="#fbbf24"/>
+  </svg>
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+      <rect width="48" height="48" rx="13" fill="#fff" fill-opacity=".12"/>
+      <path d="M35 17 A 13 13 0 1 0 37 26" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M31.5 12.5 L36.5 17.2 L30.2 19.6" fill="none" stroke="#fbbf24" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="24" y="30.5" text-anchor="middle" font-family="Inter, Arial" font-weight="800" font-size="15" fill="#fff">0</text>
+    </svg>
+    <div><b>Sprint Zero</b><small>Your first Sprint, before your first day</small></div>
+  </div>
+  <span class="scenario-chip" id="packTitle" hidden></span>
   <ol class="timeline" id="timeline" aria-label="Sprint progress"></ol>
+  <button class="how" id="howBtn" type="button">How it works</button>
 </header>
+
 <main class="layout" id="app">
-  <aside class="panel team" aria-label="Your team">
-    <h2>Your team</h2>
-    <div id="you" class="member you"><span class="avatar" style="--c:#2563eb">You</span><div><b>You</b><small>Product Owner</small></div></div>
-    <div id="team"></div>
-    <h2 class="sub">Stakeholders</h2>
-    <div id="stakeholders"></div>
+  <aside class="panel team" id="teamPanel" aria-label="Roles on the Scrum Team">
+    <section class="role-group">
+      <h2>Product Owner</h2>
+      <div class="member you"><span class="avatar" style="--c:#2563eb" aria-hidden="true">You</span><div><b>You</b><small>Decides what to build, and in what order</small></div></div>
+    </section>
+    <section class="role-group">
+      <h2>Scrum Master</h2>
+      <div id="roleSM"></div>
+    </section>
+    <section class="role-group">
+      <h2>Developers <span class="count" id="devCount"></span></h2>
+      <p class="role-note">Decide how to build it, and who does what.</p>
+      <div id="team"></div>
+    </section>
+    <section class="role-group outside">
+      <h2>Stakeholders</h2>
+      <div id="stakeholders"></div>
+    </section>
   </aside>
-  <section class="panel chat" aria-label="Team chat">
-    <div class="chat-head"><h2># riverwatch-team</h2><span id="dayLabel" class="day-label"></span></div>
+  <section class="panel chat" id="chatPanel" aria-label="Team chat">
+    <div class="chat-head"><h2># team-chat</h2><span id="dayLabel" class="day-label"></span></div>
     <div id="feed" class="feed" aria-live="polite"></div>
     <div id="composer" class="composer"></div>
   </section>
-  <aside class="panel board" aria-label="Scrum board">
+  <aside class="panel board" id="boardPanel" aria-label="Scrum board">
     <h2>Scrum board</h2>
     <div class="goal"><small>Product Goal</small><p id="productGoal" class="muted">Not set yet</p></div>
     <div class="goal"><small>Sprint Goal</small><p id="sprintGoal" class="muted">Not set yet</p></div>
@@ -40,6 +72,15 @@
     <details class="dod"><summary>Definition of Done</summary><ul id="dod"></ul></details>
   </aside>
 </main>
+
+<div class="onboard" id="onboard" hidden>
+  <div class="onboard-card" role="dialog" aria-modal="true" aria-labelledby="obTitle">
+    <div class="ob-progress" id="obProgress" aria-hidden="true"></div>
+    <div id="obBody"></div>
+    <div class="ob-nav"><button class="btn ghost" id="obBack" type="button">Back</button><button class="btn" id="obNext" type="button">Next</button></div>
+  </div>
+</div>
+<div class="tour" id="tour" hidden><div class="tour-hole" id="tourHole"></div><div class="tour-tip" id="tourTip" role="dialog" aria-live="polite"></div></div>
 <script src="/static/app.js"></script>
 </body>
 </html>

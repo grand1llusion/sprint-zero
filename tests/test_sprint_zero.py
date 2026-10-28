@@ -205,3 +205,12 @@ def test_bedrock_grader_unreadable_reply_is_flagged_not_crashed():
                                  callback_handler=None)
     g = BedrockGrader(agent).grade("q", PACK["briefing"]["rubric"], "A product goal for all residents.", "ctx")
     assert g.level == "partial" and g.grader.endswith("unparsed")
+
+
+def test_quick_checks_are_optional_and_skips_are_not_scored():
+    s = Session(PACK, TEAM, FakeGrader(), scripted_cast({}))
+    step = s.current()
+    assert step["optional"] and "skip" in step["note"].lower()
+    assert s.submit("skip")["skipped"] is True
+    assert s.current()["step"] == "briefing"
+    assert "quiz_pre" not in s.result()["quiz"]

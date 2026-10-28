@@ -18,18 +18,21 @@
   }
 
   // ---------------------------------------------------------------- team, timeline, board
+  function member(p, title) {
+    var m = el('div', 'member'); m.id = 'm-' + p.id; m.appendChild(avatar(p));
+    var d = el('div'); d.appendChild(el('b', null, p.name)); d.appendChild(el('small', null, title || p.role)); m.appendChild(d);
+    return m;
+  }
   function renderTeam() {
+    var sm = document.getElementById('roleSM'); sm.textContent = '';
+    sm.appendChild(member(view.team.scrum_master, 'Coaches you and the team; removes blockers'));
     var t = document.getElementById('team'); t.textContent = '';
-    [view.team.scrum_master].concat(view.team.developers).forEach(function (p) {
-      var m = el('div', 'member'); m.id = 'm-' + p.id; m.appendChild(avatar(p));
-      var d = el('div'); d.appendChild(el('b', null, p.name)); d.appendChild(el('small', null, p.role)); m.appendChild(d); t.appendChild(m);
-    });
+    view.team.developers.forEach(function (p) { t.appendChild(member(p)); });
+    document.getElementById('devCount').textContent = view.team.developers.length;
     var s = document.getElementById('stakeholders'); s.textContent = '';
-    view.pack.stakeholders.forEach(function (p) {
-      var m = el('div', 'member'); m.id = 'm-' + p.id; m.appendChild(avatar(p));
-      var d = el('div'); d.appendChild(el('b', null, p.name)); d.appendChild(el('small', null, p.role)); m.appendChild(d); s.appendChild(m);
-    });
-    document.getElementById('packTitle').textContent = view.pack.title + ': ' + view.pack.tagline;
+    view.pack.stakeholders.forEach(function (p) { s.appendChild(member(p)); });
+    var chip = document.getElementById('packTitle');
+    chip.textContent = 'Scenario: ' + view.pack.title; chip.hidden = false;
     document.querySelector('.chat-head h2').textContent = '# ' + view.pack.product.name.toLowerCase().replace(/\s+/g, '-');
     var dod = document.getElementById('dod'); dod.textContent = '';
     view.pack.definition_of_done.forEach(function (d) { dod.appendChild(el('li', null, d)); });
@@ -91,7 +94,8 @@
       card.appendChild(el('p', 'ask', 'Your call: ' + item.prompt)); return card;
     }
     if (item.type === 'system') return el('div', 'system', (item.day ? 'Day ' + item.day + ' · ' : '') + item.title);
-    if (item.type === 'quiz') return el('div', 'system', item.title + ': ' + item.correct + ' of ' + item.of + ' correct');
+    if (item.type === 'quiz') return el('div', 'system', item.skipped ? item.title + ': skipped'
+      : item.title + ': ' + item.correct + ' of ' + item.of + ' correct');
     if (item.type === 'you') {
       var text = item.kind === 'planning'
         ? 'Sprint backlog: ' + view.selected.join(', ') + ' (' + item.answer.total_size + ' points)'
@@ -144,13 +148,16 @@
         });
         form.appendChild(fs);
       });
-      var qrow = el('div', 'row'), qbtn = el('button', 'btn', 'Submit answers');
+      c.appendChild(el('p', 'quiz-note', s.note));
+      var qrow = el('div', 'row'), qbtn = el('button', 'btn', 'Submit answers'), skip = el('button', 'btn ghost', 'Skip for now');
+      skip.addEventListener('click', function () { submit('skip'); });
       qbtn.addEventListener('click', function () {
         var answers = s.questions.map(function (q, i) { var r = form.querySelector('input[name=q' + i + ']:checked'); return r ? +r.value : null; });
         if (answers.indexOf(null) >= 0) { qrow.firstChild.textContent = 'Answer every question first.'; return; }
         submit(answers);
       });
-      qrow.appendChild(el('small', null, s.title)); qrow.appendChild(qbtn); c.appendChild(form); c.appendChild(qrow);
+      var qbtns = el('div'); qbtns.appendChild(skip); qbtns.appendChild(document.createTextNode(' ')); qbtns.appendChild(qbtn);
+      qrow.appendChild(el('small', null, s.title)); qrow.appendChild(qbtns); c.appendChild(form); c.appendChild(qrow);
     } else if (s.kind === 'planning') {
       picked = []; var list = el('div', 'pick'), meter = el('div', 'meter'), bar = el('div', 'bar'), fillBar = el('i');
       var label = el('small'); bar.appendChild(fillBar); meter.appendChild(label); meter.appendChild(bar);
@@ -176,7 +183,7 @@
       c.appendChild(el('p', null, s.prompt)); c.appendChild(list); c.appendChild(prow); update();
     } else {
       var again = el('button', 'btn ghost', 'Play again');
-      again.addEventListener('click', function () { store('sz-session', ''); start(); });
+      again.addEventListener('click', function () { store('sz-session', ''); start(chosenPack); });
       c.appendChild(again);
     }
   }
@@ -216,8 +223,96 @@
       .then(function () { busy = false; });
   }
   function load(v) { view = v; store('sz-session', v.id); renderTeam(); render(0); }
-  function start() { api('POST', '/api/sessions', { pack: 'flood-alert' }).then(load); }
+  function start(pack) { return api('POST', '/api/sessions', { pack: pack || 'flood-alert' }).then(load); }
 
+  // ---------------------------------------------------------------- onboarding: walkthrough, then a spotlight tour
+  var chosenPack = 'flood-alert', obIndex = 0;
+  var OB = [
+    function () {
+      return '<h1 id="obTitle">Welcome to Sprint Zero</h1>' +
+        '<p class="lead">On most teams, your first Scrum Sprint is also your first week on the job. Sprint Zero lets you ' +
+        'practise first. You will play the <b>Product Owner</b> for one five-day Sprint, with an AI team that reacts the way ' +
+        'real people do.</p><div class="facts">' +
+        '<div class="fact"><b>About 20 minutes</b>Pause anytime; your progress is saved in this browser.</div>' +
+        '<div class="fact"><b>No experience needed</b>The next screen covers the basics.</div>' +
+        '<div class="fact"><b>Your own words</b>You type what you would say. There are no trick questions.</div>' +
+        '<div class="fact"><b>A coach beside you</b>Sam, the Scrum Master, gives feedback after every decision.</div></div>';
+    },
+    function () {
+      return '<h1 id="obTitle">Scrum in two minutes</h1>' +
+        '<p class="lead">Scrum is a simple way for a small team to build something useful in short cycles called ' +
+        '<b>Sprints</b>, checking and adjusting as they go. Every Scrum Team has three roles:</p><div class="roles3">' +
+        '<div class="role-card" style="--c:#2563eb"><small>That\'s you</small><b>Product Owner</b>Decides <i>what</i> gets built and in what order, ' +
+        'keeps the Product Backlog, and says no when needed to protect the goal.</div>' +
+        '<div class="role-card" style="--c:#0f766e"><small>Sam</small><b>Scrum Master</b>Coaches the team and you, helps clear blockers, ' +
+        'and keeps Scrum working. A guide, not a boss.</div>' +
+        '<div class="role-card" style="--c:#7c3aed"><small>Seven people</small><b>Developers</b>Decide <i>how</i> to build it and who does ' +
+        'which task. Each has their own skills, habits and opinions.</div></div><div class="mini">' +
+        '<div><h3>Events</h3><ul><li><b>Sprint Planning:</b> choose the work and the Sprint Goal</li><li><b>Daily Scrum:</b> the Developers check progress</li>' +
+        '<li><b>Sprint Review:</b> show stakeholders what is done</li><li><b>Retrospective:</b> improve how the team works</li></ul></div>' +
+        '<div><h3>Artifacts and their goals</h3><ul><li><b>Product Backlog</b> → Product Goal</li><li><b>Sprint Backlog</b> → Sprint Goal</li>' +
+        '<li><b>Increment</b> (the finished work) → Definition of Done</li></ul></div></div>';
+    },
+    function () {
+      return '<h1 id="obTitle">How your Sprint will run</h1><p class="lead">One Sprint, five working days, compressed into about 20 minutes.</p>' +
+        '<ol class="plan"><li class="opt"><span><b>Optional warm-up</b>: five quick questions you can skip</span><span class="t">1 min</span></li>' +
+        '<li><span><b>The briefing</b>: meet your sponsor and set the Product Goal</span><span class="t">2 min</span></li>' +
+        '<li><span><b>Sprint Planning</b>: choose the work that fits, then write the Sprint Goal</span><span class="t">4 min</span></li>' +
+        '<li><span><b>Days 2 to 5</b>: real situations land in the team chat. Type what you would say; the team reacts and Sam coaches</span><span class="t">10 min</span></li>' +
+        '<li><span><b>Debrief</b>: how you did on each Product Owner skill, and what to try next time</span><span class="t">2 min</span></li></ol>';
+    },
+    function () {
+      return '<h1 id="obTitle">Choose your scenario</h1><p class="lead">Every scenario is a real product for people who need it. ' +
+        'More are on the way.</p><div class="scenarios">' +
+        '<button type="button" class="scenario" aria-pressed="true" data-pack="flood-alert"><b>🌊 RiverWatch Alerts</b>' +
+        '<small>Text-message flood warnings for a rural county, in English and Spanish.</small></button>' +
+        '<button type="button" class="scenario" disabled><b>🏥 Clinic Finder</b><small>A low-data phone guide to the nearest free clinic.</small><span class="soon">COMING SOON</span></button>' +
+        '<button type="button" class="scenario" disabled><b>🍎 Food Bank Volunteers</b><small>Scheduling volunteers for a community food bank.</small><span class="soon">COMING SOON</span></button></div>';
+    }
+  ];
+  function showOnboard(i, onFinish) {
+    obIndex = i; var ob = document.getElementById('onboard'); ob.hidden = false;
+    document.getElementById('obBody').innerHTML = OB[i]();
+    var prog = document.getElementById('obProgress'); prog.textContent = '';
+    OB.forEach(function (_, j) { prog.appendChild(el('i', j <= i ? 'on' : '')); });
+    document.getElementById('obBack').disabled = i === 0;
+    var next = document.getElementById('obNext');
+    next.textContent = i === OB.length - 1 ? (onFinish ? 'Start my Sprint' : 'Back to my Sprint') : 'Next';
+    next.onclick = function () {
+      if (i < OB.length - 1) return showOnboard(i + 1, onFinish);
+      ob.hidden = true; if (onFinish) onFinish();
+    };
+    document.getElementById('obBack').onclick = function () { showOnboard(Math.max(0, i - 1), onFinish); };
+    next.focus();
+  }
+
+  var TOUR = [
+    ['teamPanel', 'Your team', 'Three roles: you are the Product Owner, Sam is the Scrum Master, and seven Developers do the building. Whoever is speaking lights up.'],
+    ['chatPanel', 'The team chat', 'Each day, something happens here. Look for the blue "Your call" card, then type what you would say.'],
+    ['boardPanel', 'The Scrum board', 'Your goals and the Sprint\'s work. Cards move across the board as the days pass.'],
+    ['timeline', 'Your progress', 'From setup to the debrief. Reopen "How it works" anytime.']
+  ];
+  function showTour(i) {
+    var tour = document.getElementById('tour');
+    if (i >= TOUR.length) { tour.hidden = true; store('sz-toured', '1'); return; }
+    var target = document.getElementById(TOUR[i][0]);
+    if (!target || !target.offsetParent) return showTour(i + 1);   // hidden on small screens
+    tour.hidden = false; target.scrollIntoView({ block: 'nearest' });
+    var r = target.getBoundingClientRect(), hole = document.getElementById('tourHole'), tip = document.getElementById('tourTip');
+    hole.style.left = (r.left - 6) + 'px'; hole.style.top = (r.top - 6) + 'px';
+    hole.style.width = (r.width + 12) + 'px'; hole.style.height = (r.height + 12) + 'px';
+    tip.innerHTML = ''; tip.appendChild(el('b', null, TOUR[i][1])); tip.appendChild(el('div', null, TOUR[i][2]));
+    var row = el('div', 'row'), btn = el('button', 'btn', i === TOUR.length - 1 ? 'Got it' : 'Next');
+    row.appendChild(el('small', null, (i + 1) + ' of ' + TOUR.length)); row.appendChild(btn); tip.appendChild(row);
+    btn.addEventListener('click', function () { showTour(i + 1); });
+    var left = r.right + 16 + 320 < innerWidth ? r.right + 16 : Math.max(16, r.left - 336);
+    if (left < 16 || r.width > innerWidth * .6) { left = Math.min(innerWidth - 336, Math.max(16, r.left + 16)); tip.style.top = Math.min(innerHeight - 200, r.bottom + 14) + 'px'; }
+    else tip.style.top = Math.max(16, Math.min(innerHeight - 220, r.top + 24)) + 'px';
+    tip.style.left = left + 'px'; btn.focus();
+  }
+
+  document.getElementById('howBtn').addEventListener('click', function () { showOnboard(0, null); });
   var saved = store('sz-session');
-  if (saved) api('GET', '/api/sessions/' + saved).then(load).catch(start); else start();
+  function firstRun() { showOnboard(0, function () { start(chosenPack).then(function () { if (!store('sz-toured')) showTour(0); }); }); }
+  if (saved) api('GET', '/api/sessions/' + saved).then(load).catch(firstRun); else firstRun();
 })();

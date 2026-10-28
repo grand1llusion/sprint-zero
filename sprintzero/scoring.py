@@ -58,7 +58,8 @@ def score(pack: dict[str, Any], log: list[dict[str, Any]]) -> dict[str, Any]:
     for entry in log:
         kind = entry["kind"]
         if kind == "quiz":
-            quiz[entry["step"]] = quiz_points(pack, entry["answer"])
+            if not entry.get("skipped"):
+                quiz[entry["step"]] = quiz_points(pack, entry["answer"])
             continue
         if kind == "planning":
             result = planning_points(pack, entry["answer"])
