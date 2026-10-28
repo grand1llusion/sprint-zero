@@ -75,6 +75,35 @@
     });
   }
 
+  // ---------------------------------------------------------------- learn as you go (definitions, never answers)
+  function renderLearn() {
+    var box = document.getElementById('learn'), s = view.step; box.textContent = '';
+    if (!s.terms || !s.terms.length) { box.hidden = true; return; }
+    box.hidden = false;
+    box.appendChild(el('h2', null, '📘 Learn as you go'));
+    if (s.legend) {
+      box.appendChild(el('p', 'learn-lead', 'How to read a backlog card:'));
+      var card = el('div', 'anatomy');
+      function part(n, node) { var g = el('span', 'a-part'); g.appendChild(mark(n)); g.appendChild(node); return g; }
+      var main = el('span', 'a-main'); main.appendChild(part(1, el('b', null, 'B1')));
+      main.appendChild(part(2, el('span', null, 'Residents sign up by texting RIVER…')));
+      var meta = el('span', 'a-meta'); meta.appendChild(part(3, el('span', null, 'high value')));
+      meta.appendChild(part(4, el('span', null, '5 pts')));
+      card.appendChild(main); card.appendChild(meta); box.appendChild(card);
+      var ol = el('ol', 'legend');
+      s.legend.forEach(function (l) { var li = el('li'); li.appendChild(el('b', null, l.label + ': ')); li.appendChild(document.createTextNode(l.meaning)); ol.appendChild(li); });
+      box.appendChild(ol);
+      box.appendChild(el('p', 'learn-job', 'Your job: pick the items in priority order, most valuable first, that the team can finish ' +
+        'within its capacity of about ' + s.capacity + ' points. Leave out anything that isn\'t ready.'));
+    }
+    var dl = el('dl', 'terms');
+    s.terms.filter(function (t) { return !s.legend || ['Value', 'Story points'].indexOf(t.term) < 0; }).forEach(function (t) {
+      dl.appendChild(el('dt', null, t.term)); dl.appendChild(el('dd', null, t.meaning));
+    });
+    box.appendChild(dl);
+  }
+  function mark(n) { var m = el('span', 'mark', String(n)); m.setAttribute('aria-hidden', 'true'); return m; }
+
   // ---------------------------------------------------------------- the feed
   function person(id) {
     var all = [view.team.scrum_master].concat(view.team.developers, view.pack.stakeholders);
@@ -194,7 +223,9 @@
       var prow = el('div', 'row'), pbtn = el('button', 'btn', 'Start the Sprint');
       pbtn.addEventListener('click', function () { submit(picked.slice()); });
       prow.appendChild(meter); prow.appendChild(pbtn);
-      c.appendChild(el('p', null, s.prompt)); c.appendChild(list); c.appendChild(prow); update();
+      var head = el('div', 'pick-head'); head.setAttribute('aria-hidden', 'true');
+      head.appendChild(el('span', null, 'ID · Backlog item (what users need)')); head.appendChild(el('span', null, 'Value · Size'));
+      c.appendChild(el('p', null, s.prompt)); c.appendChild(head); c.appendChild(list); c.appendChild(prow); update();
     } else {
       var again = el('button', 'btn ghost', 'Play again');
       again.addEventListener('click', function () { store('sz-session', ''); start(chosenPack); });
@@ -223,7 +254,7 @@
 
   // ---------------------------------------------------------------- flow
   function render(previousFeedLength) {
-    renderTimeline(); renderBoard(); renderFeed(previousFeedLength); renderComposer();
+    renderTimeline(); renderLearn(); renderBoard(); renderFeed(previousFeedLength); renderComposer();
     var last = view.feed.slice(previousFeedLength || 0).filter(function (i) { return i.type === 'reaction' || i.type === 'prompt'; });
     highlightSpeakers(last.map(function (i) { return i.type === 'prompt' ? i.speaker.id : i.id; }));
   }

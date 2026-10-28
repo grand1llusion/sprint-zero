@@ -226,3 +226,26 @@ def test_help_starters_exist_and_help_use_is_recorded_not_penalised():
     assert s.result()["help_used"] == 1 and s.result()["percent"] == 100
     for inj in PACK["injects"]:
         assert inj.get("help"), inj["id"]
+
+
+def test_every_step_teaches_its_terms_and_planning_explains_the_backlog():
+    s = Session(PACK, TEAM, FakeGrader(), scripted_cast({}))
+    s.submit("skip")
+    while s.current()["kind"] != "quiz":
+        step = s.current()
+        assert step["terms"] and all(t["term"] and t["meaning"] for t in step["terms"]), step["step"]
+        if step["kind"] == "planning":
+            assert [l["label"] for l in step["legend"]][:2] == ["Item ID", "Backlog item"]
+            s.submit(["B1", "B2", "B6", "B3"])
+        else:
+            s.submit("I would keep the Sprint Goal and explain the trade-off to everyone involved.")
+
+
+def test_pack_terms_must_exist_in_the_glossary(tmp_path):
+    import yaml
+    bad = copy.deepcopy(PACK)
+    bad["injects"][0]["terms"] = ["not_a_term"]
+    path = tmp_path / "pack.yaml"
+    path.write_text(yaml.safe_dump(bad))
+    with pytest.raises(PackError, match="not_a_term"):
+        load_pack(path, TEAM)

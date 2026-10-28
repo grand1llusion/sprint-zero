@@ -13,10 +13,26 @@ import copy
 from typing import Any
 
 from .grading import Grade
-from .packs import person
+from .packs import load_glossary, person
 from .scoring import COMPETENCY_NAMES, planning_points, quiz_points, score
 
 MAX_SPEAKERS = 3
+GLOSSARY = load_glossary()
+
+# How to read a backlog card, shown during Sprint Planning.
+BACKLOG_LEGEND = [
+    {"part": "B1", "label": "Item ID", "meaning": "A short label so everyone can talk about the same item."},
+    {"part": "Residents sign up by texting RIVER…", "label": "Backlog item",
+     "meaning": "Something the people using the product need. You decide which ones come first."},
+    {"part": "high value", "label": "Value",
+     "meaning": "How much it matters to residents and the sponsor: high, medium, low, or unclear."},
+    {"part": "5 pts", "label": "Size (story points)",
+     "meaning": "The team's estimate of effort, relative rather than hours. '??' means it can't be sized yet."},
+]
+
+
+def terms_for(keys: list[str]) -> list[dict[str, str]]:
+    return [{"term": GLOSSARY[k]["name"], "meaning": " ".join(GLOSSARY[k]["meaning"].split())} for k in keys]
 
 
 class SessionError(ValueError):
@@ -73,13 +89,16 @@ class Session:
                     "capacity": self.pack["capacity_points"],
                     "backlog": [{k: b.get(k) for k in ("id", "title", "value", "points")} for b in self.pack["backlog"]],
                     "prompt": (f"Choose the backlog items for this {self.pack['sprint_days']}-day Sprint, in priority "
-                               f"order. The team can take about {self.pack['capacity_points']} points.")}
+                               f"order. The team can take about {self.pack['capacity_points']} points."),
+                    "legend": BACKLOG_LEGEND,
+                    "terms": terms_for(self.pack["planning"].get("terms", []) + ["value", "story_points"])}
         if kind == "debrief":
             return {**base, "title": "Debrief", "result": self.result()}
         s = self._text_step(step_id)
         return {**base, "title": s["title"], "day": s["day"], "speaker": self._who(s["from"]),
                 "text": " ".join(s["text"].split()), "prompt": s["prompt"],
                 "help": " ".join(s.get("help", "").split()),
+                "terms": terms_for(s.get("terms", [])),
                 "reacting": [self._who(pid)["name"] for pid in self._speakers(s)]}
 
     # ------------------------------------------------------------------ handling an answer

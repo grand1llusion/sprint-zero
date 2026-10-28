@@ -73,6 +73,7 @@ backlog:
 
 # Plain-code scoring for Sprint Planning (no model involved).
 planning:
+  terms: [sprint_planning, product_backlog, capacity]
   must_include: [B1, B2, B6]     # a usable first increment needs sign-up, sending and opt-out
   should_include: [B3]
   should_exclude: [B4, B5, B8]   # vague, too large, or low value for this Sprint
@@ -89,6 +90,7 @@ briefing:
     people door to door. I need the next warning to reach any phone, in English or Spanish, and I
     need to know who we missed. You are the Product Owner. What is the Product Goal you want this
     team working toward?
+  terms: [product_owner, product_goal, stakeholder]
   competency: product_goal
   rubric:
     strong: >
@@ -108,6 +110,7 @@ briefing:
     in time to act."
 
 sprint_goal:
+  terms: [sprint_goal, sprint_backlog, sprint]
   competency: sprint_goal
   prompt: >
     Now write the Sprint Goal: one sentence on what this Sprint will achieve and why it matters.
@@ -138,6 +141,7 @@ injects:
       Friday. That's doable, right? Just slot it into this week.
     prompt: What do you say to Commissioner Pruitt?
     react: [priya, dana]
+    terms: [product_backlog, sprint_goal, sprint_review]
     competency: scope_change
     rubric:
       strong: >
@@ -171,6 +175,7 @@ injects:
       finishes early. I can't test "user friendly". What does done look like?
     prompt: How do you answer Kenji?
     react: [kenji, leah]
+    terms: [acceptance_criteria, ready, backlog_item]
     competency: acceptance_criteria
     rubric:
       strong: >
@@ -203,6 +208,7 @@ injects:
       on hasn't moved in two days. Marcus muttered that he could "just take it over".
     prompt: As Product Owner, what do you do?
     react: [jordan, marcus]
+    terms: [daily_scrum, impediment, self_managing]
     competency: team_autonomy
     rubric:
       strong: >
@@ -235,6 +241,7 @@ injects:
       know whether Spanish warnings will be ready. Should we stop everything and change course?
     prompt: What do you tell Rosa, and what happens to the Sprint?
     react: [sofia, priya]
+    terms: [inspect_and_adapt, sprint_goal, cancel_sprint]
     competency: adapting_plan
     rubric:
       strong: >
@@ -270,6 +277,7 @@ injects:
       tests or run it on the staging number. Can we call it done? It's basically done.
     prompt: Do you accept the STOP story as done? What do you say?
     react: [marcus, kenji]
+    terms: [definition_of_done, increment, sprint_review]
     competency: definition_of_done
     rubric:
       strong: >

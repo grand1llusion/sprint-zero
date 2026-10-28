@@ -26,6 +26,10 @@ def load_team(path: Path | None = None) -> dict[str, Any]:
     return team
 
 
+def load_glossary(path: Path | None = None) -> dict[str, Any]:
+    return _read(path or PACKS_DIR / "glossary.yaml")
+
+
 def _check_rubric(where: str, rubric: Any, problems: list[str]) -> None:
     if not isinstance(rubric, dict) or set(rubric) != set(LEVELS):
         problems.append(f"{where}: rubric needs exactly {', '.join(LEVELS)}")
@@ -78,6 +82,12 @@ def load_pack(pack: str | Path, team: dict[str, Any] | None = None) -> dict[str,
     for i, q in enumerate(data["quiz"]):
         if not 0 <= int(q.get("answer", -1)) < len(q.get("options", [])):
             problems.append(f"quiz {i + 1}: answer index out of range")
+    glossary = load_glossary()
+    steps = [("briefing", data["briefing"]), ("sprint_goal", data["sprint_goal"]), ("planning", data["planning"])]
+    for where, step in steps + [(f"inject {i.get('id')}", i) for i in data["injects"]]:
+        unknown = [t for t in step.get("terms", []) if t not in glossary]
+        if unknown:
+            problems.append(f"{where}: terms not in the glossary: {unknown}")
     if problems:
         raise PackError(f"{path}: " + "; ".join(problems))
     data["injects"] = sorted(data["injects"], key=lambda i: int(i["day"]))

@@ -192,3 +192,24 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
   animation: spin .8s linear infinite; flex: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+
+/* learn as you go */
+.learn { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;
+  box-shadow: 0 6px 18px rgba(180, 83, 9, .08); animation: rise .3s ease-out; }
+.learn h2 { color: #92400e; margin-bottom: 6px; }
+.learn-lead { font-size: 13px; font-weight: 600; margin: 0 0 6px; }
+.learn-job { font-size: 13px; margin: 8px 0 4px; padding: 8px 10px; background: #fff; border-radius: 8px; border-left: 4px solid #f59e0b; }
+.anatomy { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; background: #fff; border: 1px solid var(--line);
+  border-left: 4px solid var(--accent); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; }
+.anatomy .a-main, .anatomy .a-meta { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.anatomy .a-meta { color: var(--muted); }
+.mark { width: 17px; height: 17px; border-radius: 50%; display: inline-grid; place-items: center; background: #f59e0b; color: #fff;
+  font-size: 10.5px; font-weight: 800; flex: none; }
+.legend { margin: 8px 0 0; padding-left: 20px; font-size: 12.5px; display: grid; gap: 4px; }
+.legend li::marker { font-weight: 800; color: #b45309; }
+.terms { margin: 8px 0 0; font-size: 12.5px; }
+.terms dt { font-weight: 700; margin-top: 6px; }
+.terms dd { margin: 1px 0 0; color: #374151; }
+.pick-head { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--muted); padding: 0 12px 4px; }
+.anatomy .a-part { display: inline-flex; align-items: center; gap: 4px; margin-right: 6px; }

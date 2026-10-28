@@ -1,0 +1,113 @@
+# Plain-language Scrum terms, shown in the "Learn as you go" card. Original wording; definitions, not answers.
+# Packs choose which terms each step shows with `terms: [...]`.
+
+product_owner:
+  name: Product Owner
+  meaning: >
+    The person accountable for the product's value: decides what gets built and in what order, and
+    keeps the Product Backlog. In Sprint Zero, that's you.
+product_goal:
+  name: Product Goal
+  meaning: >
+    The long-term outcome the product is working toward: who it is for and what changes for them.
+    Every Sprint should move the product closer to it.
+product_backlog:
+  name: Product Backlog
+  meaning: >
+    The single ordered list of everything that might be built. The Product Owner orders it, most
+    valuable first. New ideas go here, not straight into the current Sprint.
+backlog_item:
+  name: Backlog item
+  meaning: >
+    One piece of work on the Product Backlog, written as something a user needs, such as "Residents
+    can stop alerts by texting STOP".
+value:
+  name: Value
+  meaning: >
+    How much an item matters to the people the product serves and to the sponsor. Teams usually do the
+    most valuable work first.
+story_points:
+  name: Story points
+  meaning: >
+    A common way teams estimate size: a relative number for effort, complexity and risk, not hours.
+    An 8 is roughly four times a 2. "??" means nobody can size it yet.
+capacity:
+  name: Capacity
+  meaning: >
+    How much work the Developers think they can finish in one Sprint, based on experience. Planning
+    far beyond it usually means unfinished work.
+sprint:
+  name: Sprint
+  meaning: >
+    A short, fixed period (here, five working days) in which the team builds something usable. A new
+    Sprint starts as soon as the last one ends.
+sprint_planning:
+  name: Sprint Planning
+  meaning: >
+    The event that starts a Sprint. The Product Owner brings the most valuable items; the Developers
+    decide how much they can take; together they agree a Sprint Goal.
+sprint_goal:
+  name: Sprint Goal
+  meaning: >
+    The single objective for this Sprint: one sentence on what will be achieved and why it matters. It
+    gives the team focus when surprises arrive.
+sprint_backlog:
+  name: Sprint Backlog
+  meaning: >
+    The Sprint Goal, the items chosen for this Sprint, and the Developers' plan for delivering them.
+    The Developers own it.
+stakeholder:
+  name: Stakeholder
+  meaning: >
+    Anyone outside the Scrum Team with an interest in the product, such as sponsors, users or officials.
+    They shape the Product Backlog through the Product Owner.
+sprint_review:
+  name: Sprint Review
+  meaning: >
+    The event near the end of a Sprint where the team shows stakeholders what is truly done and
+    discusses what to do next.
+acceptance_criteria:
+  name: Acceptance criteria
+  meaning: >
+    Specific, testable conditions that say when a backlog item does what it should, such as "the
+    message fits in one text". They turn opinions into checks.
+ready:
+  name: Ready
+  meaning: >
+    An item is ready when the team understands it well enough, usually with acceptance criteria and a
+    size, to finish it within one Sprint.
+daily_scrum:
+  name: Daily Scrum
+  meaning: >
+    A 15-minute event each day for the Developers to check progress toward the Sprint Goal and plan the
+    next day. It is theirs, not a status report to a manager.
+impediment:
+  name: Impediment
+  meaning: >
+    Anything blocking the team's progress that they cannot easily remove themselves. Helping remove
+    impediments is part of the Scrum Master's job.
+self_managing:
+  name: Self-managing
+  meaning: >
+    Scrum teams decide internally who does what, when and how. The Product Owner says what is most
+    valuable; the Developers decide how to deliver it.
+inspect_and_adapt:
+  name: Inspect and adapt
+  meaning: >
+    Scrum's core habit: look regularly at the work and the situation, then adjust the plan when
+    something changes.
+cancel_sprint:
+  name: Cancelling a Sprint
+  meaning: >
+    Ending a Sprint early. It is rare, happens only when the Sprint Goal no longer makes sense, and
+    only the Product Owner can do it.
+definition_of_done:
+  name: Definition of Done
+  meaning: >
+    The team's shared checklist for when work is truly finished, such as reviewed, tested and running.
+    Work that doesn't meet it isn't done.
+increment:
+  name: Increment
+  meaning: >
+    The usable, finished work produced in a Sprint that meets the Definition of Done. Only done work
+    counts toward the increment.
