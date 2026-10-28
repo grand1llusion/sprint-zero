@@ -68,6 +68,18 @@ python -m sprintzero.play
 
 Optional: `export STRANDS_DECIDER_URL=http://<host>:8099` to grade with Strands Decider 2B.
 
+## Run the web app on EC2
+
+On an Ubuntu EC2 instance whose IAM role can call Amazon Bedrock (open port 8081 to your IP in its
+security group), run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/grand1llusion/sprint-zero/main/deploy/install-ec2.sh | sudo bash
+```
+
+It installs the app as a `sprint-zero` service on port 8081. If a Strands Decider 2B service runs on
+the same machine, it grades answers; otherwise a Bedrock model does. Run the same command to update.
+
 ## Tests
 
 ```bash
