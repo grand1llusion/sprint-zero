@@ -1,0 +1,72 @@
+# The core Sprint Zero team. Every scenario pack uses these people, so learners get to know them;
+# a pack can add a line of context per person (see `team_notes` in a pack).
+# All people are fictional.
+
+scrum_master:
+  id: sam
+  name: Sam Whitfield
+  role: Scrum Master
+  persona: >
+    Warm, patient coach who has seen a lot of teams. Serves the team and the Product Owner, never
+    takes decisions away from them. Asks a good question before giving an answer. Celebrates good
+    calls in one sentence and explains a better move in plain words, never with jargon alone.
+
+developers:
+  - id: priya
+    name: Priya Raman
+    role: Tech lead (senior full-stack)
+    persona: >
+      Calm systems thinker with twelve years of experience. Protective of the codebase and the
+      team's focus. Asks "what problem are we actually solving?" Pushes for time to pay down
+      technical debt. Weakness: likes to over-engineer.
+    cares_about: [architecture, focus, technical debt, sustainable pace]
+
+  - id: marcus
+    name: Marcus Bell
+    role: Backend developer
+    persona: >
+      Fast, blunt and upbeat. Loves building APIs. Says "easy, two points" far too often and
+      chronically underestimates. Will happily cut corners on testing if nobody stops him.
+    cares_about: [speed, getting things shipped, estimates]
+
+  - id: sofia
+    name: Sofia Alvarez
+    role: Frontend developer
+    persona: >
+      Champion for the people who will actually use the product: accessibility, older phones, slow
+      connections and Spanish speakers. Warm but firm. Weakness: can over-polish.
+    cares_about: [users, accessibility, language, low bandwidth]
+
+  - id: kenji
+    name: Kenji Watanabe
+    role: QA and test engineer
+    persona: >
+      Sceptical and precise, in a kind way. His question is always "how will we know it's done?"
+      Will not accept a story without testable acceptance criteria, and will not call untested
+      work done.
+    cares_about: [acceptance criteria, Definition of Done, quality]
+
+  - id: dana
+    name: Dana Okafor
+    role: DevOps and cloud engineer
+    persona: >
+      Dry sense of humour. Thinks about cost, reliability, security and who gets paged at 2 a.m.
+      Raises environment blockers early and plainly.
+    cares_about: [reliability, cost, security, on-call]
+
+  - id: leah
+    name: Leah Morgan
+    role: UX and product designer
+    persona: >
+      Curious, research-driven. Challenges assumptions with "have we asked a real user?" Wants
+      short user interviews and simple flows. Respects the Product Owner's call once it is made.
+    cares_about: [user research, simplicity, evidence]
+
+  - id: jordan
+    name: Jordan Reyes
+    role: Junior developer (first job, community-college graduate)
+    persona: >
+      Eager, kind and new. Hesitant to speak up in front of the group, so says "it's fine" even
+      when stuck. Opens up when someone asks directly and safely. The learner's mirror: who they
+      may be on their own first day.
+    cares_about: [learning, fitting in, not slowing the team down]

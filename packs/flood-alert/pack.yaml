@@ -1,0 +1,315 @@
+# Sprint Zero scenario pack: RiverWatch Alerts
+# A five-day Sprint building a text-message flood warning for a rural county.
+# Everything here is fictional and original. Authors: copy this file to start a new pack.
+
+id: flood-alert
+version: 1
+title: "RiverWatch Alerts"
+tagline: "Text-message flood warnings for a rural county"
+focus_area: climate resilience
+sprint_days: 5
+capacity_points: 20
+
+product:
+  name: RiverWatch Alerts
+  summary: >
+    Harlan County sits along the Cane River. Many residents have older phones, patchy internet and
+    no smartphone apps; about a third speak Spanish at home. RiverWatch Alerts will text residents
+    when the river is about to flood their zone, in the language they choose, and let the county
+    see who the warning did not reach.
+
+stakeholders:
+  - id: rosa
+    name: Rosa Delgado
+    role: County emergency manager (product sponsor)
+    persona: >
+      Practical, calm under pressure, has run three flood evacuations. Cares that warnings arrive
+      on any phone, in the right language, and that the county knows who did not get one.
+  - id: pruitt
+    name: Commissioner Dale Pruitt
+    role: County commissioner
+    persona: >
+      Friendly, impatient, thinks in headlines. Makes promises to the county board and then needs
+      the team to keep them. Not a villain; he wants the county to look prepared.
+
+team_notes:
+  dana: "Worried about rural cell coverage and text-message costs during a mass alert."
+  sofia: "Grew up translating for her grandparents; feels strongly about Spanish messages."
+
+backlog:
+  - id: B1
+    title: Residents sign up by texting RIVER to the county number
+    value: high
+    points: 5
+  - id: B2
+    title: Send a flood warning text to everyone registered in a river zone
+    value: high
+    points: 8
+  - id: B3
+    title: Warnings in Spanish for residents who choose it
+    value: high
+    points: 3
+  - id: B4
+    title: Make it user friendly
+    value: unclear
+    points: null          # nobody can size it: no acceptance criteria
+    vague: true
+  - id: B5
+    title: Live map dashboard of flood zones for county staff
+    value: medium
+    points: 13
+  - id: B6
+    title: Residents can stop alerts by texting STOP
+    value: high           # required by text-messaging rules before any mass send
+    points: 2
+  - id: B7
+    title: Delivery report showing which numbers did not receive a warning
+    value: medium
+    points: 5
+  - id: B8
+    title: Post warnings to the county Facebook page
+    value: low
+    points: 8
+
+# Plain-code scoring for Sprint Planning (no model involved).
+planning:
+  must_include: [B1, B2, B6]     # a usable first increment needs sign-up, sending and opt-out
+  should_include: [B3]
+  should_exclude: [B4, B5, B8]   # vague, too large, or low value for this Sprint
+  explain: >
+    A strong Sprint takes the smallest set of items that makes a usable, lawful warning service:
+    sign-up, sending, Spanish, and STOP to opt out (18 points, under the 20-point capacity). The
+    vague "user friendly" item needs acceptance criteria before anyone can plan it, and the map
+    dashboard would eat most of the Sprint on its own.
+
+briefing:
+  from: rosa
+  text: >
+    Thanks for taking this on. Last spring the Cane River rose six feet overnight and we reached
+    people door to door. I need the next warning to reach any phone, in English or Spanish, and I
+    need to know who we missed. You are the Product Owner. What is the Product Goal you want this
+    team working toward?
+  competency: product_goal
+  rubric:
+    strong: >
+      States one clear, user-centred outcome for the product, such as residents in flood zones
+      getting a timely warning on any phone in their language, and is specific enough to guide
+      choices.
+    partial: >
+      Names a reasonable outcome but is vague, feature-shaped (a list of features) or leaves out
+      who it is for.
+    weak: >
+      Is a task list, a deadline, or a technology choice rather than an outcome for residents.
+    off_topic: Does not attempt a Product Goal or is unrelated to the product.
+  ideal: >
+    "Every resident in a Cane River flood zone gets a warning they can understand, on any phone,
+    in time to act."
+
+sprint_goal:
+  competency: sprint_goal
+  prompt: >
+    Now write the Sprint Goal: one sentence on what this Sprint will achieve and why it matters.
+  rubric:
+    strong: >
+      One coherent objective for this Sprint that serves the Product Goal and can be met by the
+      items selected, such as residents being able to sign up and receive a test warning they can
+      opt out of.
+    partial: >
+      Related to the product but is a list of items, too broad for five days, or does not say why
+      it matters.
+    weak: >
+      Is "finish all the stories", a deadline, or unrelated to the selected work.
+    off_topic: Does not attempt a Sprint Goal.
+  ideal: >
+    "A resident can text RIVER to sign up, receive a test flood warning in English or Spanish, and
+    text STOP to opt out."
+
+injects:
+  - id: I1
+    day: 2
+    from: pruitt
+    title: The commissioner's promise
+    text: >
+      Morning! Great news: I told the county board they'd see a live flood-zone map dashboard on
+      Friday. That's doable, right? Just slot it into this week.
+    prompt: What do you say to Commissioner Pruitt?
+    react: [priya, dana]
+    competency: scope_change
+    rubric:
+      strong: >
+        Protects the Sprint Goal without being dismissive: thanks him, explains that the current
+        Sprint is committed to the warning service, adds the dashboard to the Product Backlog to
+        order with him, and offers what he can show the board (the working warning service, or the
+        Sprint Review).
+      partial: >
+        Pushes back or defers the request but without explaining why, or without offering a next
+        step or a way to show progress.
+      weak: >
+        Agrees to add the dashboard to this Sprint, promises Friday, or tells the developers to
+        work overtime to fit it in.
+      off_topic: Does not respond to the request.
+    coach_point: >
+      The Product Owner protects the Sprint Goal. New ideas go to the Product Backlog, where they
+      are ordered against everything else; the Sprint Review is where stakeholders see progress.
+    ideal: >
+      "Thanks, Commissioner. This week the team is committed to getting warnings to residents'
+      phones. I'll add the dashboard to the backlog and we can rank it together; Friday's review
+      is a great moment to show the board a real warning going out."
+
+  - id: I2
+    day: 3
+    from: kenji
+    title: "\"User friendly\" has no acceptance criteria"
+    text: >
+      Quick one. "Make it user friendly" is still on the backlog and Marcus wants to start it if he
+      finishes early. I can't test "user friendly". What does done look like?
+    prompt: How do you answer Kenji?
+    react: [kenji, leah]
+    competency: acceptance_criteria
+    rubric:
+      strong: >
+        Turns the vague item into specific, testable acceptance criteria or splits it into small
+        stories (for example: messages under 160 characters, readable at a 6th-grade level, works on
+        a basic flip phone), and keeps it out of this Sprint until it is refined, possibly with
+        Leah's user input.
+      partial: >
+        Agrees it needs clarifying or asks the team to define it, but gives no criteria or next
+        step.
+      weak: >
+        Says "just make it look nice", tells Marcus to start anyway, or dismisses Kenji's concern.
+      off_topic: Does not address the item.
+    coach_point: >
+      A backlog item is ready when the team understands it well enough to finish it in a Sprint.
+      Acceptance criteria turn opinions ("user friendly") into checks anyone can run.
+    ideal: >
+      "Good catch. Let's split it: messages fit in one text, read at a 6th-grade level, and work on
+      a flip phone. Leah, could you test the wording with two residents? It stays out of this
+      Sprint until we agree on those."
+
+  - id: I3
+    day: 3
+    from: sam
+    title: The quiet blocker
+    text: >
+      At today's Daily Scrum, Jordan said "it's fine" again, but the sign-up story Jordan is working
+      on hasn't moved in two days. Marcus muttered that he could "just take it over".
+    prompt: As Product Owner, what do you do?
+    react: [jordan, marcus]
+    competency: team_autonomy
+    rubric:
+      strong: >
+        Does not assign or reassign tasks; trusts the Developers to manage their own work and asks
+        the Scrum Master to help surface the impediment, while making it safe for Jordan to ask for
+        help (for example by checking in kindly, not publicly blaming). May offer to clarify the
+        requirement if that is the blocker.
+      partial: >
+        Notices the problem and wants to help, but leans toward directing the work (for example
+        telling the developers to pair) or only waits passively.
+      weak: >
+        Reassigns the story to Marcus, criticises Jordan, or turns the Daily Scrum into a status
+        report to the Product Owner.
+      off_topic: Does not address the situation.
+    coach_point: >
+      Developers decide who does which task. The Product Owner can clarify what is needed; the
+      Scrum Master helps remove impediments and keeps the team a safe place to say "I'm stuck".
+    ideal: >
+      "Sam, could you check in with Jordan after the Daily Scrum? If the sign-up rules are unclear,
+      I'm happy to walk through them. I'll leave how the team handles the work to the team."
+
+  - id: I4
+    day: 4
+    from: rosa
+    title: The storm moves up
+    text: >
+      Forecast changed: the river is expected to crest next Tuesday, not in three weeks. I need to
+      know whether Spanish warnings will be ready. Should we stop everything and change course?
+    prompt: What do you tell Rosa, and what happens to the Sprint?
+    react: [sofia, priya]
+    competency: adapting_plan
+    rubric:
+      strong: >
+        Inspects the Sprint Goal against the news instead of panicking: the current goal (sign-up,
+        warnings in English and Spanish, opt-out) still fits the urgent need, so the Sprint
+        continues; re-orders the Product Backlog for what comes next (for example the delivery
+        report), and keeps Rosa informed. Only cancels the Sprint if the goal has become obsolete,
+        and knows that is the Product Owner's call.
+      partial: >
+        Responds sensibly to the news but either changes the plan without checking the Sprint Goal,
+        or keeps going without updating the backlog or Rosa.
+      weak: >
+        Cancels the Sprint or throws out the plan without reason, promises everything by Tuesday,
+        or demands overtime.
+      off_topic: Does not address the change.
+    coach_point: >
+      Scrum expects change. Inspect the Sprint Goal: if it still makes sense, keep the Sprint and
+      adapt the Product Backlog. Cancelling a Sprint is rare and only the Product Owner can do it,
+      when the goal is obsolete.
+    ideal: >
+      "Our Sprint Goal is exactly what you need for Tuesday: sign-up, warnings in English and
+      Spanish, and opt-out. We'll keep the Sprint, and I'll move the delivery report to the top of
+      the backlog for next week. I'll update you after Friday's review."
+
+  - id: I5
+    day: 5
+    from: marcus
+    title: "\"Basically done\""
+    text: >
+      Sprint Review in an hour. The STOP opt-out works on my machine, I just haven't written the
+      tests or run it on the staging number. Can we call it done? It's basically done.
+    prompt: Do you accept the STOP story as done? What do you say?
+    react: [marcus, kenji]
+    competency: definition_of_done
+    rubric:
+      strong: >
+        Does not accept it: work that does not meet the Definition of Done (tested, running in
+        staging) is not done and is not shown as done at the Sprint Review. Says this kindly,
+        notes that opt-out is legally required before any mass send, and lets the team decide how
+        to finish it.
+      partial: >
+        Hesitates or asks for tests, but would still present it as done or partly done.
+      weak: >
+        Accepts it as done, or tells the team to skip testing to make the review.
+      off_topic: Does not address whether it is done.
+    coach_point: >
+      The Definition of Done protects quality and trust. "Basically done" is not done; unfinished
+      work returns to the Product Backlog, and the Sprint Review shows only what truly meets the
+      Definition of Done.
+    ideal: >
+      "Thanks for pushing on it, Marcus, but if it isn't tested and running in staging it isn't
+      done, and STOP has to be rock-solid before we ever send a mass alert. Let's show it honestly
+      as in progress at the review."
+
+definition_of_done:
+  - Code reviewed by another developer
+  - Automated tests written and passing
+  - Running on the staging text number
+  - Messages checked in English and Spanish where they apply
+
+quiz:
+  - q: Who decides which developer works on which task during a Sprint?
+    options: [The Product Owner, The Scrum Master, The Developers, The most senior developer]
+    answer: 2
+  - q: A stakeholder asks for a big new feature in the middle of a Sprint. What should normally happen?
+    options:
+      - It is added to the current Sprint so the stakeholder is happy
+      - It goes on the Product Backlog to be ordered by the Product Owner
+      - The Sprint is cancelled and restarted with the new feature
+      - The Scrum Master decides whether to accept it
+    answer: 1
+  - q: What makes a backlog item ready for a Sprint?
+    options:
+      - It has a priority label
+      - The team understands it well enough, with acceptance criteria, to finish it in one Sprint
+      - The stakeholder has asked for it more than once
+      - It has been on the backlog for at least two weeks
+    answer: 1
+  - q: A developer says a story is "basically done" but untested. What is its status at the Sprint Review?
+    options: [Done, Partly done and counted, Not done, Done if the Product Owner approves]
+    answer: 2
+  - q: What is the main purpose of a Sprint Goal?
+    options:
+      - To list every task the team will do
+      - To give the Sprint one clear objective that guides the team's choices
+      - To set the deadline for the release
+      - To measure each developer's performance
+    answer: 1
