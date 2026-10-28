@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprint Zero</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial' font-weight='700' fill='white' text-anchor='middle'%3E0%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true">0</span><div><b>Sprint Zero</b><small id="packTitle">Your first Sprint, before your first day</small></div></div>
+  <ol class="timeline" id="timeline" aria-label="Sprint progress"></ol>
+</header>
+<main class="layout" id="app">
+  <aside class="panel team" aria-label="Your team">
+    <h2>Your team</h2>
+    <div id="you" class="member you"><span class="avatar" style="--c:#2563eb">You</span><div><b>You</b><small>Product Owner</small></div></div>
+    <div id="team"></div>
+    <h2 class="sub">Stakeholders</h2>
+    <div id="stakeholders"></div>
+  </aside>
+  <section class="panel chat" aria-label="Team chat">
+    <div class="chat-head"><h2># riverwatch-team</h2><span id="dayLabel" class="day-label"></span></div>
+    <div id="feed" class="feed" aria-live="polite"></div>
+    <div id="composer" class="composer"></div>
+  </section>
+  <aside class="panel board" aria-label="Scrum board">
+    <h2>Scrum board</h2>
+    <div class="goal"><small>Product Goal</small><p id="productGoal" class="muted">Not set yet</p></div>
+    <div class="goal"><small>Sprint Goal</small><p id="sprintGoal" class="muted">Not set yet</p></div>
+    <div class="columns">
+      <div class="col"><h3>To do</h3><div id="colTodo"></div></div>
+      <div class="col"><h3>In progress</h3><div id="colDoing"></div></div>
+      <div class="col"><h3>Done</h3><div id="colDone"></div></div>
+    </div>
+    <details class="dod"><summary>Definition of Done</summary><ul id="dod"></ul></details>
+  </aside>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
