@@ -62,6 +62,7 @@ class Start(BaseModel):
 class Answer(BaseModel):
     step: int
     answer: Any
+    help_used: bool = False
 
 
 def create_app(grader=None, agent_factory_for=memory_agent_factory, store=None) -> FastAPI:
@@ -98,6 +99,7 @@ def create_app(grader=None, agent_factory_for=memory_agent_factory, store=None) 
                 "team": {"scrum_master": {k: team["scrum_master"][k] for k in ("id", "name", "role")},
                          "developers": [{k: d[k] for k in ("id", "name", "role")} for d in team["developers"]]},
                 "step": s.current(), "feed": record["feed"], "selected": s.state["selected"],
+                "grader": getattr(grader, "name", "grader"),
                 "product_goal": log.get("briefing", {}).get("answer"),
                 "sprint_goal": log.get("sprint_goal", {}).get("answer"),
                 "result": s.result() if s.finished else None}
@@ -135,7 +137,7 @@ def create_app(grader=None, agent_factory_for=memory_agent_factory, store=None) 
         s = session_for(sid, record)
         step = s.current()
         try:
-            result = s.submit(body.answer)
+            result = s.submit(body.answer, help_used=body.help_used)
         except SessionError as exc:
             raise HTTPException(422, str(exc))
         feed = record["feed"]

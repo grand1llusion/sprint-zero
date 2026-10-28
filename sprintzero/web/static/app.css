@@ -180,3 +180,15 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .debrief .skills { display: grid; gap: 8px; margin: 14px 0; }
 .debrief .skill { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; font-size: 14px; }
 .debrief .quiz-delta { font-weight: 700; }
+
+/* HELP button and the working status */
+.composer .left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.btn.help { background: #fff7e6; color: #92400e; border: 1px solid #fcd34d; letter-spacing: .06em; padding: 8px 14px; }
+.btn.help:hover { background: #fef3c7; }
+.composer textarea::placeholder { color: #8a93a8; }
+.status { display: flex; align-items: center; gap: 12px; padding: 14px 4px; font-weight: 600; color: var(--accent); }
+.status-time { margin-left: auto; font-weight: 600; }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--soft); border-top-color: var(--accent);
+  animation: spin .8s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }

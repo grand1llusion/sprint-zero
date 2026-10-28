@@ -78,15 +78,20 @@ class Session:
             return {**base, "title": "Debrief", "result": self.result()}
         s = self._text_step(step_id)
         return {**base, "title": s["title"], "day": s["day"], "speaker": self._who(s["from"]),
-                "text": " ".join(s["text"].split()), "prompt": s["prompt"]}
+                "text": " ".join(s["text"].split()), "prompt": s["prompt"],
+                "help": " ".join(s.get("help", "").split()),
+                "reacting": [self._who(pid)["name"] for pid in self._speakers(s)]}
 
     # ------------------------------------------------------------------ handling an answer
-    def submit(self, answer: Any) -> dict[str, Any]:
+    def submit(self, answer: Any, help_used: bool = False) -> dict[str, Any]:
+        """Answer the current step. `help_used` records that the learner started from the HELP example."""
         if self.finished:
             raise SessionError("the session is over")
         kind, step_id = self.steps[self.state["step"]]
-        handler = {"quiz": self._submit_quiz, "planning": self._submit_planning, "text": self._submit_text}[kind]
-        result = handler(step_id, answer)
+        if kind == "text":
+            result = self._submit_text(step_id, answer, bool(help_used))
+        else:
+            result = {"quiz": self._submit_quiz, "planning": self._submit_planning}[kind](step_id, answer)
         self.state["step"] += 1
         result["next"] = self.current()
         return result
@@ -110,16 +115,19 @@ class Session:
                 + (f"SPRINT GOAL: {sprint}\nSPRINT ITEMS: {', '.join(self.state['selected'])}\n" if sprint else "")
                 + f"SITUATION (day {s['day']}): {speaker['name']} ({speaker['role']}) says: {' '.join(s['text'].split())}")
 
-    def _submit_text(self, step_id: str, answer: Any) -> dict[str, Any]:
+    def _speakers(self, s: dict[str, Any]) -> list[str]:
+        """Who reacts to a free-text step: a stakeholder who raised it, then the people it affects."""
+        raised_by = [s["from"]] if s["from"] not in self._developers() and s["from"] != self.team["scrum_master"]["id"] else []
+        return list(dict.fromkeys(raised_by + s["react"]))[:MAX_SPEAKERS]
+
+    def _submit_text(self, step_id: str, answer: Any, help_used: bool = False) -> dict[str, Any]:
         answer = str(answer or "").strip()
         s = self._text_step(step_id)
         grade: Grade = self.grader.grade(s["prompt"], s["rubric"], answer, self._context(s))
         self.state["log"].append({"kind": "text", "step": step_id, "competency": s["competency"],
-                                  "answer": answer, "grade": grade.to_dict()})
-        speakers = list(dict.fromkeys(([s["from"]] if s["from"] not in self._developers() and
-                                       s["from"] != self.team["scrum_master"]["id"] else []) + s["react"]))
+                                  "answer": answer, "grade": grade.to_dict(), "help_used": help_used})
         situation = f"Day {s['day']}. {self._who(s['from'])['name']} said: {s['text']}"
-        reactions = self.cast.react(speakers[:MAX_SPEAKERS], situation, answer, grade)
+        reactions = self.cast.react(self._speakers(s), situation, answer, grade)
         coach = self.cast.coach(situation, answer, grade, s.get("coach_point", s["rubric"]["strong"]),
                                 s.get("ideal", ""))
         return {"grade": grade.to_dict(), "competency": COMPETENCY_NAMES.get(s["competency"], s["competency"]),

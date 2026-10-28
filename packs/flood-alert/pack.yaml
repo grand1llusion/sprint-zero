@@ -101,6 +101,8 @@ briefing:
     weak: >
       Is a task list, a deadline, or a technology choice rather than an outcome for residents.
     off_topic: Does not attempt a Product Goal or is unrelated to the product.
+  help: >
+    Every [who the product is for] can [the outcome they get], so that [why it matters to them].
   ideal: >
     "Every resident in a Cane River flood zone gets a warning they can understand, on any phone,
     in time to act."
@@ -120,6 +122,8 @@ sprint_goal:
     weak: >
       Is "finish all the stories", a deadline, or unrelated to the selected work.
     off_topic: Does not attempt a Sprint Goal.
+  help: >
+    By the end of this Sprint, a resident can [the first thing they can really do], so that [why that matters this week].
   ideal: >
     "A resident can text RIVER to sign up, receive a test flood warning in English or Spanish, and
     text STOP to opt out."
@@ -151,6 +155,8 @@ injects:
     coach_point: >
       The Product Owner protects the Sprint Goal. New ideas go to the Product Backlog, where they
       are ordered against everything else; the Sprint Review is where stakeholders see progress.
+    help: >
+      Thanks for [what you appreciate]. This Sprint the team is committed to [our Sprint Goal]. I'll add [the request] to the Product Backlog so we can [what happens next], and at [which event] you can show the board [what will be ready].
     ideal: >
       "Thanks, Commissioner. This week the team is committed to getting warnings to residents'
       phones. I'll add the dashboard to the backlog and we can rank it together; Friday's review
@@ -181,6 +187,8 @@ injects:
     coach_point: >
       A backlog item is ready when the team understands it well enough to finish it in a Sprint.
       Acceptance criteria turn opinions ("user friendly") into checks anyone can run.
+    help: >
+      Good catch. Let's turn "user friendly" into checks we can test: [criterion 1], [criterion 2] and [criterion 3]. Until we agree on those, it [stays in or out of this Sprint], and [who could help us learn what users need].
     ideal: >
       "Good catch. Let's split it: messages fit in one text, read at a 6th-grade level, and work on
       a flip phone. Leah, could you test the wording with two residents? It stays out of this
@@ -212,6 +220,8 @@ injects:
     coach_point: >
       Developers decide who does which task. The Product Owner can clarify what is needed; the
       Scrum Master helps remove impediments and keeps the team a safe place to say "I'm stuck".
+    help: >
+      [Who could check in with Jordan, and how kindly], and I'm happy to [what I can clarify as Product Owner]. How the work is shared out is [whose decision].
     ideal: >
       "Sam, could you check in with Jordan after the Daily Scrum? If the sign-up rules are unclear,
       I'm happy to walk through them. I'll leave how the team handles the work to the team."
@@ -244,6 +254,8 @@ injects:
       Scrum expects change. Inspect the Sprint Goal: if it still makes sense, keep the Sprint and
       adapt the Product Backlog. Cancelling a Sprint is rare and only the Product Owner can do it,
       when the goal is obsolete.
+    help: >
+      Let's check our Sprint Goal against the new forecast: it [still fits or no longer fits] because [reason]. So we will [keep or change the Sprint], I'll move [which item] up the Product Backlog, and I'll update you [when].
     ideal: >
       "Our Sprint Goal is exactly what you need for Tuesday: sign-up, warnings in English and
       Spanish, and opt-out. We'll keep the Sprint, and I'll move the delivery report to the top of
@@ -274,6 +286,8 @@ injects:
       The Definition of Done protects quality and trust. "Basically done" is not done; unfinished
       work returns to the Product Backlog, and the Sprint Review shows only what truly meets the
       Definition of Done.
+    help: >
+      Thanks, [name]. Our Definition of Done says [what done means here], so this story is [done or not done]. At the Sprint Review we'll show it as [how], because [why it matters for residents].
     ideal: >
       "Thanks for pushing on it, Marcus, but if it isn't tested and running in staging it isn't
       done, and STOP has to be rock-solid before we ever send a mass alert. Let's show it honestly

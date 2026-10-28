@@ -54,7 +54,7 @@ def quiz_points(pack: dict[str, Any], answers: list[int]) -> int:
 
 def score(pack: dict[str, Any], log: list[dict[str, Any]]) -> dict[str, Any]:
     """Re-score a whole run from its decision log."""
-    total, best_total, competencies, flags, quiz = 0, 0, {}, [], {}
+    total, best_total, competencies, flags, quiz, helps = 0, 0, {}, [], {}, 0
     for entry in log:
         kind = entry["kind"]
         if kind == "quiz":
@@ -67,6 +67,7 @@ def score(pack: dict[str, Any], log: list[dict[str, Any]]) -> dict[str, Any]:
             best_total += result["max"]
             competencies["backlog_ordering"] = result["level"]
             continue
+        helps += 1 if entry.get("help_used") else 0
         level = entry["grade"]["level"]
         total += POINTS[level]
         best_total += POINTS["strong"]
@@ -76,4 +77,4 @@ def score(pack: dict[str, Any], log: list[dict[str, Any]]) -> dict[str, Any]:
     ratio = total / best_total if best_total else 0.0
     medal = next((name for cut, name in MEDALS if ratio >= cut), None)
     return {"score": total, "max": best_total, "percent": round(100 * max(ratio, 0)),
-            "medal": medal, "competencies": competencies, "quiz": quiz, "flags": flags}
+            "medal": medal, "competencies": competencies, "quiz": quiz, "flags": flags, "help_used": helps}

@@ -3,7 +3,7 @@
   var COLOURS = { you: '#2563eb', sam: '#0f766e', priya: '#7c3aed', marcus: '#ea580c', sofia: '#db2777', kenji: '#0891b2',
                   dana: '#475569', leah: '#ca8a04', jordan: '#16a34a', rosa: '#9333ea', pruitt: '#b45309' };
   var LEVEL = { strong: 'STRONG', partial: 'PARTIAL', weak: 'WEAK', off_topic: 'OFF TOPIC' };
-  var view = null, busy = false, picked = [];
+  var view = null, busy = false, picked = [], helpUsed = false;
 
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function initials(name) { return name.split(' ').filter(function (w) { return /^[A-Z]/.test(w); }).slice(-2).map(function (w) { return w[0]; }).join(''); }
@@ -133,11 +133,25 @@
   function renderComposer() {
     var c = document.getElementById('composer'); c.textContent = ''; var s = view.step;
     if (s.kind === 'text') {
-      var ta = el('textarea'); ta.placeholder = 'Type what you would say…'; ta.maxLength = 1500; ta.setAttribute('aria-label', s.prompt);
-      var row = el('div', 'row'), hint = el('small', null, 'Ctrl+Enter to send'), send = el('button', 'btn', 'Send');
+      helpUsed = false;
+      var ta = el('textarea'); ta.maxLength = 1500; ta.setAttribute('aria-label', s.prompt);
+      ta.placeholder = 'Type what you would say…' + (s.help ? '\nNeed an idea? Press HELP for an example you can edit.' : '');
+      var row = el('div', 'row'), left = el('div', 'left'), send = el('button', 'btn', 'Send');
+      if (s.help) {
+        var help = el('button', 'btn help', 'HELP'); help.type = 'button';
+        help.setAttribute('aria-label', 'Help: fill in an example answer you can edit');
+        help.addEventListener('click', function () {
+          ta.value = ta.value.trim() ? ta.value.trim() + '\n\n' + s.help : s.help;
+          helpUsed = true; ta.focus();
+          var start = ta.value.indexOf('[', ta.value.length - s.help.length), end = ta.value.indexOf(']', start);
+          if (start >= 0 && end > start) ta.setSelectionRange(start, end + 1);   // select the first blank to fill in
+        });
+        left.appendChild(help);
+      }
+      left.appendChild(el('small', null, s.help ? 'Replace each [bracket] with your own words · Ctrl+Enter to send' : 'Ctrl+Enter to send'));
       send.addEventListener('click', function () { if (ta.value.trim()) submit(ta.value.trim()); });
       ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) send.click(); });
-      row.appendChild(hint); row.appendChild(send); c.appendChild(ta); c.appendChild(row); ta.focus();
+      row.appendChild(left); row.appendChild(send); c.appendChild(ta); c.appendChild(row); ta.focus();
     } else if (s.kind === 'quiz') {
       var form = el('div', 'quiz');
       s.questions.forEach(function (q, i) {
@@ -201,6 +215,8 @@
     if (r.quiz.quiz_pre != null && r.quiz.quiz_post != null) {
       d.appendChild(el('p', 'quiz-delta', 'Quick check: ' + r.quiz.quiz_pre + ' before → ' + r.quiz.quiz_post + ' after'));
     }
+    if (r.help_used) d.appendChild(el('p', null, 'You used HELP on ' + r.help_used + (r.help_used === 1 ? ' decision' : ' decisions') +
+      '. Next time, try one without it.'));
     r.flags.forEach(function (f) { d.appendChild(el('small', null, f)); });
     return d;
   }
@@ -211,15 +227,44 @@
     var last = view.feed.slice(previousFeedLength || 0).filter(function (i) { return i.type === 'reaction' || i.type === 'prompt'; });
     highlightSpeakers(last.map(function (i) { return i.type === 'prompt' ? i.speaker.id : i.id; }));
   }
+  // What the system is doing while the learner waits: real steps, named after the grader and people involved.
+  function statusLines(step, answer) {
+    if (step.kind === 'quiz') return [answer === 'skip' ? 'Skipping the warm-up…' : 'Saving your answers…'];
+    var decider = /decider/i.test(view.grader || '');
+    var grading = decider ? 'Strands Decider 2B is weighing your answer against the rubric…'
+                          : 'Checking your answer against the rubric…';
+    if (step.kind === 'planning') {
+      return ['Allowing Strands to weigh your plan…', 'Checking the Sprint against the team\'s capacity…',
+              'Priya and Marcus are reviewing the Sprint backlog…', 'Sam is preparing your coaching…'];
+    }
+    var names = step.reacting || [], who = names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0];
+    return ['Allowing Strands to weigh the option…', grading,
+            who ? who + (names.length > 1 ? ' are' : ' is') + ' reading your message…' : 'The team is reading your message…',
+            'Sam is preparing your coaching…'];
+  }
+  function showStatus(lines) {
+    var c = document.getElementById('composer'); c.textContent = '';
+    var box = el('div', 'status'); box.setAttribute('role', 'status'); box.setAttribute('aria-live', 'polite');
+    var spin = el('span', 'spinner'); spin.setAttribute('aria-hidden', 'true');
+    var text = el('span', 'status-text', lines[0]), secs = el('small', 'status-time', '0s');
+    box.appendChild(spin); box.appendChild(text); box.appendChild(secs); c.appendChild(box);
+    var i = 0, started = Date.now();
+    var timer = setInterval(function () {
+      var elapsed = Math.round((Date.now() - started) / 1000); secs.textContent = elapsed + 's';
+      var next = Math.min(lines.length - 1, Math.floor(elapsed / 3));
+      if (next !== i) { i = next; text.textContent = lines[i]; }
+    }, 500);
+    return function () { clearInterval(timer); };
+  }
   function submit(answer) {
     if (busy) return; busy = true;
-    var c = document.getElementById('composer'); c.querySelectorAll('button,textarea,input').forEach(function (x) { x.disabled = true; });
+    var stop = showStatus(statusLines(view.step, answer));
     var typing = el('div', 'typing', 'The team is responding'); ['.', '.', '.'].forEach(function (d) { typing.appendChild(el('span', null, d)); });
     var feed = document.getElementById('feed'); feed.appendChild(typing); feed.scrollTop = feed.scrollHeight;
     var before = view.feed.length;
-    api('POST', '/api/sessions/' + view.id + '/answer', { step: view.step.number, answer: answer })
-      .then(function (v) { view = v; typing.remove(); render(before); })
-      .catch(function (e) { typing.textContent = 'Something went wrong: ' + e.message; renderComposer(); })
+    api('POST', '/api/sessions/' + view.id + '/answer', { step: view.step.number, answer: answer, help_used: helpUsed })
+      .then(function (v) { stop(); view = v; typing.remove(); render(before); })
+      .catch(function (e) { stop(); typing.textContent = 'Something went wrong: ' + e.message; renderComposer(); })
       .then(function () { busy = false; });
   }
   function load(v) { view = v; store('sz-session', v.id); renderTeam(); render(0); }

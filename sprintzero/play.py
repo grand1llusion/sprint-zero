@@ -113,7 +113,7 @@ def main() -> None:
     say(" ".join(pack["product"]["summary"].split()))
     say("You are the Product Owner. Sam Whitfield is your Scrum Master; seven developers are your team.", DIM)
     while not session.finished:
-        step = session.current()
+        step, help_used = session.current(), False
         if step["kind"] == "quiz":
             answer = play_quiz(step)
         elif step["kind"] == "planning":
@@ -122,11 +122,16 @@ def main() -> None:
             day = f"Day {step['day']} · " if step["day"] else ""
             say(f"\n{day}{step['title']}", BOLD + CYAN)
             say(f"{step['speaker']['name']} ({step['speaker']['role']}): {step['text']}")
+            if step.get("help"):
+                say("Need an idea? Type help for an example you can adapt.", DIM)
             answer = ask_text(step["prompt"])
+            if answer.lower() == "help" and step.get("help"):
+                say(f"Example to adapt (replace each [bracket]): {step['help']}", YELLOW)
+                answer, help_used = ask_text(step["prompt"]), True
         try:
             started = time.time()
             say("…", DIM)
-            result = session.submit(answer)
+            result = session.submit(answer, help_used=help_used)
             show_result(result)
             say(f"({time.time() - started:.1f}s)", DIM)
         except SessionError as exc:

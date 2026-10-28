@@ -25,7 +25,10 @@ def test_a_whole_session_over_http():
     v = c.post("/api/sessions", json={"pack": "flood-alert"}).json()
     assert v["step"]["kind"] == "quiz" and len(v["team"]["developers"]) == 7
     v = answer(c, v, [0] * 5)
-    v = answer(c, v, "Every resident in a flood zone gets a warning on any phone.")
+    assert v["step"]["help"] and v["grader"] == "fake"
+    r = c.post(f"/api/sessions/{v['id']}/answer", json={"step": v["step"]["number"], "help_used": True,
+                                                       "answer": "Every resident in a flood zone gets a warning on any phone."})
+    v = r.json()
     assert v["product_goal"] and v["step"]["kind"] == "planning"
     v = answer(c, v, ["B1", "B2", "B6", "B3"])
     assert v["selected"] == ["B1", "B2", "B6", "B3"]

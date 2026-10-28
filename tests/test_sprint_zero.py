@@ -214,3 +214,15 @@ def test_quick_checks_are_optional_and_skips_are_not_scored():
     assert s.submit("skip")["skipped"] is True
     assert s.current()["step"] == "briefing"
     assert "quiz_pre" not in s.result()["quiz"]
+
+
+def test_help_starters_exist_and_help_use_is_recorded_not_penalised():
+    s = Session(PACK, TEAM, FakeGrader(), scripted_cast({}))
+    s.submit("skip")
+    step = s.current()
+    assert "[" in step["help"] and step["reacting"] == ["Rosa Delgado", "Leah Morgan"]
+    s.submit("Every resident can get a warning on any phone, in time to act.", help_used=True)
+    assert s.state["log"][-1]["help_used"] is True
+    assert s.result()["help_used"] == 1 and s.result()["percent"] == 100
+    for inj in PACK["injects"]:
+        assert inj.get("help"), inj["id"]
