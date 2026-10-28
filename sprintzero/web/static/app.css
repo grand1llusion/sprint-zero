@@ -213,3 +213,25 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .pick-head { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; text-transform: uppercase;
   letter-spacing: .05em; color: var(--muted); padding: 0 12px 4px; }
 .anatomy .a-part { display: inline-flex; align-items: center; gap: 4px; margin-right: 6px; }
+
+/* today's agenda */
+.today { border-bottom: 1px solid var(--line); padding: 8px 16px 6px; background: #fbfcfe; }
+.today-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.today-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+.today-items { list-style: none; display: flex; gap: 6px; flex-wrap: wrap; margin: 0; padding: 0; }
+.today-items li { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; border-radius: 999px;
+  padding: 3px 10px; border: 1px solid var(--line); background: #fff; color: var(--muted); }
+.today-items li.done { color: var(--strong); border-color: #bbf7d0; background: #f0fdf4; }
+.today-items li.now { color: #fff; background: var(--accent); border-color: var(--accent); }
+.today-items li.event:not(.now) { font-style: italic; }
+.today-items .tick { font-size: 11px; }
+.today-next { margin-left: auto; font-size: 12px; color: var(--muted); font-weight: 600; }
+.whole-sprint { font-size: 12.5px; margin-top: 4px; }
+.whole-sprint summary { cursor: pointer; color: var(--accent); font-weight: 600; width: max-content; }
+.sprint-days { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; margin: 8px 0 4px; }
+.sprint-day { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px; display: grid; gap: 3px; align-content: start; }
+.sprint-day.current { border-color: var(--accent); box-shadow: 0 0 0 3px var(--soft); }
+.sprint-day b { font-size: 12px; }
+.ag { font-size: 11.5px; color: var(--muted); } .ag.done { color: var(--strong); } .ag.now { color: var(--accent); font-weight: 700; }
+.ag.event:not(.now) { font-style: italic; }
+@media (max-width: 760px) { .today-next { margin-left: 0; } }

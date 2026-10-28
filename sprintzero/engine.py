@@ -68,7 +68,7 @@ class Session:
                     "react": b.get("react", [b["from"], "leah"])}
         if step_id == "sprint_goal":
             g = self.pack["sprint_goal"]
-            return {**g, "id": "sprint_goal", "day": 0, "title": "The Sprint Goal",
+            return {**g, "id": "sprint_goal", "day": 1, "title": "The Sprint Goal",
                     "from": self.team["scrum_master"]["id"], "text": g["prompt"],
                     "react": g.get("react", ["priya"])}
         return next(i for i in self.pack["injects"] if i["id"] == step_id)
@@ -100,6 +100,35 @@ class Session:
                 "help": " ".join(s.get("help", "").split()),
                 "terms": terms_for(s.get("terms", [])),
                 "reacting": [self._who(pid)["name"] for pid in self._speakers(s)]}
+
+    def agenda(self) -> list[dict[str, Any]]:
+        """Every moment of the Sprint, by day, with done / now / next. Upcoming surprises stay hidden."""
+        now = self.state["step"]
+        days = self.pack["sprint_days"]
+        index = {step_id: i for i, (_, step_id) in enumerate(self.steps)}
+        items: list[dict[str, Any]] = []
+
+        def add(day: int, title: str, at: int, hidden: str | None = None, event: bool = False):
+            status = "done" if at < now else "now" if at == now else "next"
+            items.append({"day": day, "title": hidden if (hidden and status == "next") else title,
+                          "status": status, "event": event})
+
+        add(0, "Warm-up (optional)", index["quiz_pre"])
+        add(0, "Briefing: the Product Goal", index["briefing"])
+        add(1, "Sprint Planning", index["planning"], event=True)
+        add(1, "The Sprint Goal", index["sprint_goal"])
+        for day in range(2, days + 1):
+            todays = [i for i in self.pack["injects"] if int(i["day"]) == day]
+            first = index[todays[0]["id"]] if todays else index["quiz_post"]
+            add(day, "Daily Scrum", first - 1 if first > index["sprint_goal"] else first, event=True)
+            items[-1]["status"] = "done" if first <= now else "next"   # the Daily Scrum opens the day
+            for inj in todays:
+                add(day, inj["title"], index[inj["id"]], hidden="Something will come up…")
+        add(days, "Sprint Review", index["quiz_post"] - 1, event=True)
+        items[-1]["status"] = "done" if now >= index["quiz_post"] else "next"
+        add(days + 1, "Quick check (optional)", index["quiz_post"])
+        add(days + 1, "Retrospective and debrief", index["debrief"], event=True)
+        return items
 
     # ------------------------------------------------------------------ handling an answer
     def submit(self, answer: Any, help_used: bool = False) -> dict[str, Any]:

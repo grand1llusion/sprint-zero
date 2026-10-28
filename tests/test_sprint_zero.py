@@ -249,3 +249,17 @@ def test_pack_terms_must_exist_in_the_glossary(tmp_path):
     path.write_text(yaml.safe_dump(bad))
     with pytest.raises(PackError, match="not_a_term"):
         load_pack(path, TEAM)
+
+
+def test_agenda_tracks_the_day_and_hides_upcoming_surprises():
+    s = Session(PACK, TEAM, FakeGrader(), scripted_cast({}))
+    for a in ["skip", "A product goal for every resident in a flood zone.", ["B1", "B2", "B6", "B3"],
+              "Residents can sign up, receive a warning and opt out."]:
+        s.submit(a)
+    agenda = s.agenda()
+    assert s.current()["day"] == 2 and s._text_step("sprint_goal")["day"] == 1
+    now = [a for a in agenda if a["status"] == "now"]
+    assert now == [{"day": 2, "title": "The commissioner's promise", "status": "now", "event": False}]
+    upcoming = [a["title"] for a in agenda if a["status"] == "next" and not a["event"] and 2 <= a["day"] <= 5]
+    assert upcoming and set(upcoming) == {"Something will come up…"}
+    assert [a["title"] for a in agenda if a["day"] == 5][-1] == "Sprint Review"

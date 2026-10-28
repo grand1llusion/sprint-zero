@@ -58,6 +58,39 @@
     document.getElementById('dayLabel').textContent = labels[Math.min(day, labels.length - 1)];
   }
 
+  // Today's agenda (done ✓ / now ● / next ○), what comes next, and the whole Sprint on request.
+  function dayName(d) { return d === 0 ? 'Setup' : d > view.pack.sprint_days ? 'Debrief' : 'Day ' + d; }
+  function renderToday() {
+    var box = document.getElementById('today'); box.textContent = '';
+    if (!view.agenda) return;
+    var day = currentDay(), todays = view.agenda.filter(function (a) { return a.day === day; });
+    var strip = el('div', 'today-strip');
+    strip.appendChild(el('span', 'today-label', day > view.pack.sprint_days ? 'Wrap-up' : dayName(day) + (day ? ' today' : '')));
+    var list = el('ol', 'today-items');
+    todays.forEach(function (a) {
+      var li = el('li', a.status + (a.event ? ' event' : ''));
+      li.appendChild(el('span', 'tick', a.status === 'done' ? '✓' : a.status === 'now' ? '●' : '○'));
+      li.appendChild(el('span', null, a.title));
+      if (a.status === 'now') li.setAttribute('aria-current', 'step');
+      list.appendChild(li);
+    });
+    strip.appendChild(list);
+    var later = view.agenda.filter(function (a) { return a.day > day; })[0];
+    if (later) strip.appendChild(el('span', 'today-next', 'Up next: ' + dayName(later.day) + ' · ' + later.title));
+    box.appendChild(strip);
+    var all = el('details', 'whole-sprint'); all.appendChild(el('summary', null, 'See the whole Sprint'));
+    var grid = el('div', 'sprint-days');
+    var days = []; view.agenda.forEach(function (a) { if (days.indexOf(a.day) < 0) days.push(a.day); });
+    days.forEach(function (d) {
+      var col = el('div', 'sprint-day' + (d === day ? ' current' : '')); col.appendChild(el('b', null, dayName(d)));
+      view.agenda.filter(function (a) { return a.day === d; }).forEach(function (a) {
+        col.appendChild(el('span', 'ag ' + a.status + (a.event ? ' event' : ''), (a.status === 'done' ? '✓ ' : a.status === 'now' ? '● ' : '○ ') + a.title));
+      });
+      grid.appendChild(col);
+    });
+    all.appendChild(grid); box.appendChild(all);
+  }
+
   function renderBoard() {
     setGoal('productGoal', view.product_goal); setGoal('sprintGoal', view.sprint_goal);
     var items = view.pack.backlog.filter(function (b) { return view.selected.indexOf(b.id) >= 0; });
@@ -254,7 +287,7 @@
 
   // ---------------------------------------------------------------- flow
   function render(previousFeedLength) {
-    renderTimeline(); renderLearn(); renderBoard(); renderFeed(previousFeedLength); renderComposer();
+    renderTimeline(); renderToday(); renderLearn(); renderBoard(); renderFeed(previousFeedLength); renderComposer();
     var last = view.feed.slice(previousFeedLength || 0).filter(function (i) { return i.type === 'reaction' || i.type === 'prompt'; });
     highlightSpeakers(last.map(function (i) { return i.type === 'prompt' ? i.speaker.id : i.id; }));
   }

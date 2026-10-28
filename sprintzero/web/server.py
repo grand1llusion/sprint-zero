@@ -100,6 +100,7 @@ def create_app(grader=None, agent_factory_for=memory_agent_factory, store=None) 
                          "developers": [{k: d[k] for k in ("id", "name", "role")} for d in team["developers"]]},
                 "step": s.current(), "feed": record["feed"], "selected": s.state["selected"],
                 "grader": getattr(grader, "name", "grader"),
+                "agenda": s.agenda(),
                 "product_goal": log.get("briefing", {}).get("answer"),
                 "sprint_goal": log.get("sprint_goal", {}).get("answer"),
                 "result": s.result() if s.finished else None}
