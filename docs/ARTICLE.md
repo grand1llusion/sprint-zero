@@ -4,7 +4,7 @@
 You play the Product Owner for one Sprint; an AI Scrum Master and seven AI developers, each a Strands agent with
 their own personality, react the way a real team would, and a coach shows you what to try next.
 
-**Demo video:** [FILL YouTube link]  
+**Demo video:** https://youtu.be/Mif7gT-GCiY  
 **Code:** https://github.com/grand1llusion/sprint-zero  
 **Focus area:** Education
 
@@ -122,4 +122,4 @@ More scenario packs (clinic finder, food bank volunteers, Military-to-Agile for 
 serverless hosting, and a pilot with learners to measure the before-and-after.
 
 **Built with:** Strands Agents SDK, Amazon Bedrock, Strands Decider 2B, Amazon EC2, Amazon S3, Amazon DynamoDB.
-All people and places are fictional. The video narration uses an AI-generated voice. *(remove this sentence if not)*
+All people and places are fictional. The video narration uses an AI-generated voice.

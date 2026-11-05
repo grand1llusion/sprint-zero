@@ -5,6 +5,8 @@ Owner. An AI Scrum Master and seven AI developers, each with their own personali
 real team would: they push back on vague stories, underestimate, get quietly stuck, and hold you to
 the Definition of Done.
 
+**Demo video:** https://youtu.be/Mif7gT-GCiY
+
 Most community-college and high-school graduates walk into their first tech job without ever having
 seen how a team plans and delivers work. Sprint Zero lets them practise one Sprint first, safely,
 and shows their improvement with a quick check before and after.
