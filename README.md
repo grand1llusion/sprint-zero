@@ -45,6 +45,9 @@ Personas live in [`packs/team.yaml`](packs/team.yaml). All people and places are
 - **Strands Agents SDK:** every person is a Strands `Agent` on Amazon Bedrock with their own persona
   and memory. The sprint engine chooses who speaks (one to three people per event), so sessions stay
   fast and affordable.
+- **Strands hooks and tools** ([`sprintzero/hooks.py`](sprintzero/hooks.py)): a `StayInCharacter`
+  `HookProvider` checks every model reply against plain-code rules and sets `retry` when a teammate
+  breaks character; Sam, the Scrum Master, has a `define_term` `@tool` that reads the shared glossary.
 - **The engine is plain code** ([`sprintzero/engine.py`](sprintzero/engine.py)): it owns the days, the
   state and the order of events. Session state is JSON, so a web server can stay stateless.
 - **Grading** ([`sprintzero/grading.py`](sprintzero/grading.py)): Strands Decider 2B picks the rubric
@@ -55,6 +58,23 @@ Personas live in [`packs/team.yaml`](packs/team.yaml). All people and places are
 - **Scenario packs are data** ([`packs/flood-alert/pack.yaml`](packs/flood-alert/pack.yaml)): the
   product, backlog, injects with rubrics, coaching points and quiz. Write a new YAML file to add a
   scenario; no code changes.
+
+## Walk through it like the workshop
+
+[`notebooks/sprint_zero_walkthrough.ipynb`](notebooks/sprint_zero_walkthrough.ipynb) rebuilds Sprint Zero's team in
+the order of the *Building AI Agents with Strands SDK* workshop: the agent loop, a `@tool`, a steering hook,
+session managers, multi-agent routing and rubric evals. Open it in Amazon SageMaker (JupyterLab) or any Jupyter
+with AWS credentials and Bedrock access to Amazon Nova Lite; set `USE_BEDROCK = False` to run it with no AWS calls.
+
+Or set up the same environment by hand, as in the workshop:
+
+```bash
+git clone https://github.com/grand1llusion/sprint-zero.git && cd sprint-zero
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt          # strands-agents, boto3, PyYAML, FastAPI
+export AWS_REGION=us-east-1               # needs Bedrock model access to Amazon Nova Lite
+python -m sprintzero.play                 # one Sprint in the terminal
+```
 
 ## Play it in AWS CloudShell
 

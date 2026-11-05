@@ -74,8 +74,8 @@ Plus two stakeholders: Rosa, the emergency manager, and Commissioner Pruitt.
   A new scenario (a clinic finder, a food bank, a Military-to-Agile pack) needs no code changes.
 - **Built to serve real users.** A FastAPI web app with a stateless server: sessions can live in **Amazon
   DynamoDB**, agent memory in **S3**. The demo runs on **Amazon EC2** next to a Strands Decider 2B server.
-- **Tested offline:** 22 tests with scripted Strands models and a fake grader cover the engine, grading, routing,
-  scoring replay and the web API.
+- **Tested offline:** 27 tests with scripted Strands models and a fake grader cover the engine, grading, routing,
+  scoring replay, the steering hook, the glossary tool and the web API.
 
 ## From the workshop to Sprint Zero
 
@@ -84,10 +84,10 @@ including the optional multi-agent and evals modules), then pushed each idea fur
 
 | Workshop module | What it taught | How Sprint Zero uses or extends it |
 |---|---|---|
-| 1. Agent loop | One agent, a system prompt, Amazon Bedrock | Nine agents, each with its own persona, scenario context and rules for staying in character |
+| 1. Agent loop and tools | One agent, a system prompt, Amazon Bedrock, a `@tool` | Nine agents, each with its own persona and scenario context; Sam, the Scrum Master, has a `define_term` `@tool` so coaching uses the glossary's vetted wording |
 | 4. Session managers | `FileSessionManager` persists one conversation | One persisted memory per teammate per learner (files locally, S3 in production), so a stateless web server can serve many learners |
 | 6. Multi-agent | An orchestrator delegates to a specialist | A code-owned sprint engine is the orchestrator: for every event it picks the one to three teammates the decision affects, and each hears what the others said |
-| 2–3. Hooks and steering | Deterministic control around a model | The same principle at the app level: plain code owns the timeline, routing and scoring; agents only react |
+| 2–3. Hooks and steering | Deterministic control around a model | A `StayInCharacter` `HookProvider` on every teammate: after each model call, plain-code rules check the line (no "as an AI", no scores, no lists or emojis, short dialogue) and set `retry` so Strands asks again. At the app level, plain code also owns the timeline, routing and scoring |
 | 7. Evals | Score responses against a rubric | Every learner answer is scored against the scenario's rubric, by Strands Decider 2B with a calibrated confidence, or a Bedrock model as backup |
 | 5. AgentCore | Managed deployment | Next step: the web app runs on EC2 today; AgentCore Runtime is the planned serverless home |
 
@@ -120,6 +120,8 @@ community-college students, comparing first and second runs.
 
 More scenario packs (clinic finder, food bank volunteers, Military-to-Agile for transitioning service members),
 serverless hosting, and a pilot with learners to measure the before-and-after.
+
+**Try it step by step:** the repo's `notebooks/sprint_zero_walkthrough.ipynb` rebuilds the team module by module, in the workshop's order, and runs in Amazon SageMaker or with no AWS access at all.
 
 **Built with:** Strands Agents SDK, Amazon Bedrock, Strands Decider 2B, Amazon EC2, Amazon S3, Amazon DynamoDB.
 All people and places are fictional. The video narration uses an AI-generated voice.

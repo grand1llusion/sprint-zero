@@ -20,7 +20,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from ..agents import Cast, make_agent, make_model
+from ..agents import Cast, make_agent, make_model, teammate_extras
 from ..engine import Session, SessionError
 from ..grading import BedrockGrader, DeciderGrader, FallbackGrader
 from ..packs import PACKS_DIR, load_pack, load_team, person
@@ -51,7 +51,8 @@ def memory_agent_factory(sid: str) -> Callable[[str, str], Any]:
             from strands.session.file_session_manager import FileSessionManager
             manager = FileSessionManager(session_id=key, storage_dir=os.environ.get("SPRINTZERO_DATA", ".sprintzero"))
         return Agent(model=make_model(), system_prompt=prompt, name=name, callback_handler=None,
-                     session_manager=manager, conversation_manager=SlidingWindowConversationManager(window_size=8))
+                     session_manager=manager, conversation_manager=SlidingWindowConversationManager(window_size=8),
+                     **teammate_extras(name))
     return factory
 
 

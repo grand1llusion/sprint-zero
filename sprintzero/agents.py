@@ -33,11 +33,23 @@ def make_model(model_id: str | None = None, temperature: float = 0.7):
                         temperature=temperature, max_tokens=300)
 
 
-def make_agent(system_prompt: str, model=None, name: str | None = None):
+def teammate_extras(name: str | None) -> dict[str, Any]:
+    """What every cast member gets from Strands beyond a prompt: the StayInCharacter steering hook, and
+    for the Scrum Master, the define_term glossary tool."""
+    from .hooks import StayInCharacter, define_term
+    from .packs import load_team
+    extras: dict[str, Any] = {"hooks": [StayInCharacter()]}
+    if name and name == load_team()["scrum_master"]["name"]:
+        extras["tools"] = [define_term]
+    return extras
+
+
+def make_agent(system_prompt: str, model=None, name: str | None = None, cast_member: bool = False):
     from strands import Agent
     from strands.agent.conversation_manager import SlidingWindowConversationManager
+    extras = teammate_extras(name) if cast_member else {}
     return Agent(model=model or make_model(), system_prompt=system_prompt, name=name, callback_handler=None,
-                 conversation_manager=SlidingWindowConversationManager(window_size=8))
+                 conversation_manager=SlidingWindowConversationManager(window_size=8), **extras)
 
 
 def clean(text: str) -> str:
@@ -50,7 +62,7 @@ class Cast:
     def __init__(self, pack: dict[str, Any], team: dict[str, Any],
                  agent_factory: Callable[[str, str], Any] | None = None):
         self.pack, self.team = pack, team
-        self.agent_factory = agent_factory or (lambda prompt, name: make_agent(prompt, name=name))
+        self.agent_factory = agent_factory or (lambda prompt, name: make_agent(prompt, name=name, cast_member=True))
         self._agents: dict[str, Any] = {}
 
     def _persona_prompt(self, p: dict[str, Any]) -> str:
@@ -94,5 +106,6 @@ class Cast:
                   f"The Product Owner said: \"{po_answer.strip()[:1200]}\"\n"
                   f"How it landed: {grade.level.replace('_', ' ')}.\n"
                   f"Principle to teach: {' '.join(coach_point.split())}\n"
+                  f"If a Scrum term needs explaining, look it up with define_term and use its wording.\n"
                   f"An example of a strong answer, for your reference only: {' '.join(ideal.split())}")
         return clean(self.agent(sm)(prompt))
