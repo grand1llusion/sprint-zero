@@ -77,6 +77,20 @@ Plus two stakeholders: Rosa, the emergency manager, and Commissioner Pruitt.
 - **Tested offline:** 22 tests with scripted Strands models and a fake grader cover the engine, grading, routing,
   scoring replay and the web API.
 
+## From the workshop to Sprint Zero
+
+I completed *Building AI Agents with Strands SDK: From Simple Loops to Multi-Agent Swarms* (all seven modules,
+including the optional multi-agent and evals modules), then pushed each idea further:
+
+| Workshop module | What it taught | How Sprint Zero uses or extends it |
+|---|---|---|
+| 1. Agent loop | One agent, a system prompt, Amazon Bedrock | Nine agents, each with its own persona, scenario context and rules for staying in character |
+| 4. Session managers | `FileSessionManager` persists one conversation | One persisted memory per teammate per learner (files locally, S3 in production), so a stateless web server can serve many learners |
+| 6. Multi-agent | An orchestrator delegates to a specialist | A code-owned sprint engine is the orchestrator: for every event it picks the one to three teammates the decision affects, and each hears what the others said |
+| 2–3. Hooks and steering | Deterministic control around a model | The same principle at the app level: plain code owns the timeline, routing and scoring; agents only react |
+| 7. Evals | Score responses against a rubric | Every learner answer is scored against the scenario's rubric, by Strands Decider 2B with a calibrated confidence, or a Bedrock model as backup |
+| 5. AgentCore | Managed deployment | Next step: the web app runs on EC2 today; AgentCore Runtime is the planned serverless home |
+
 ## Measuring improvement
 
 Sprint Zero measures learning in three ways, all stored with each session:
